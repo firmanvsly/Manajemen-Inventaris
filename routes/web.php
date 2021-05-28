@@ -24,4 +24,8 @@ Route::middleware('auth')->group(function(){
     Route::resource('user', 'UserController');
     Route::get('user/{id}/password', 'UserController@password')->name('user.password');
     Route::put('user/password/{id}', 'UserController@changePassword')->name('user.change.password');
+    Route::get('user/{id}/permission', 'UserController@permission')->name('user.permission');
+    Route::post('user/permission', 'UserController@storePermission')->name('user.store.permission');
+
+    Route::resource('role', 'RoleController');
 });

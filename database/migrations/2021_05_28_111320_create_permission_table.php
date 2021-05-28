@@ -15,13 +15,13 @@ class CreatePermissionTable extends Migration
     {
         Schema::create('permission', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_role');
+            $table->unsignedBigInteger('id_user');
             $table->enum('type',['user','barang','ruangan','kategori','laporan']);
-            $table->tinyInteger('create');
-            $table->tinyInteger('read');
-            $table->tinyInteger('update');
-            $table->tinyInteger('delete');
-            $table->tinyInteger('download');
+            $table->tinyInteger('create')->default(0);
+            $table->tinyInteger('read')->default(0);
+            $table->tinyInteger('update')->default(0);
+            $table->tinyInteger('delete')->default(0);
+            $table->tinyInteger('download')->default(0);
             $table->timestamps();
         });
     }

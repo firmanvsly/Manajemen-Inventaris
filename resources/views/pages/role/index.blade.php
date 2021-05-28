@@ -12,7 +12,7 @@
         <div class="col-sm-4">
             <div class="page-header float-left">
                 <div class="page-title">
-                    <h1>User</h1>
+                    <h1>Role</h1>
                 </div>
             </div>
         </div>
@@ -21,7 +21,7 @@
                 <div class="page-title">
                     <ol class="breadcrumb text-right">
                         <li><a href="#">Dashboard</a></li>
-                        <li class="active">User</li>
+                        <li class="active">Role</li>
                     </ol>
                 </div>
             </div>
@@ -35,8 +35,8 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
-                            <strong class="card-title">User</strong>
-                            <a href="{{ route('user.create') }}" class="btn btn-primary">Tambah User</a>
+                            <strong class="card-title">Role</strong>
+                            <a href="{{ route('role.create') }}" class="btn btn-primary">Tambah Role</a>
                         </div>
                         <div class="card-body">
                             @if (Session::has('success'))
@@ -54,12 +54,10 @@
                                         </button>
                                 </div>
                             @endif
-                            <table id="userTable" class="table table-striped table-bordered">
+                            <table id="roleTable" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Name</th>
-                                        <th>Username</th>
                                         <th>Role</th>
                                         <th>Action</th>
                                     </tr>
@@ -82,25 +80,17 @@
     <script src="{{ asset('assets/vendors/sweet-alert/js/sweetalert.min.js') }}"></script>
     <script>
         (function($) {
-            let userTable = $('#userTable').DataTable({
+            let roleTable = $('#roleTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('user.index') }}',
+                ajax: '{{ route('role.index') }}',
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex'
                     },
                     {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'username',
-                        name: 'username'
-                    },
-                    {
-                        data: 'role',
-                        name: 'role'
+                        data: 'nama_role',
+                        name: 'nama_role'
                     },
                     {
                         data: 'action',
@@ -109,7 +99,7 @@
                 ]
             });
 
-            $('#userTable').on('click', '.btn-delete', function() {
+            $('#roleTable').on('click', '.btn-delete', function() {
                 let id = $(this).data('id')
                 delConfirm(id)
             });
@@ -129,13 +119,13 @@
                                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                                 },
                                 type: "DELETE",
-                                url: 'user/' + id,
+                                url: 'role/' + id,
                                 success: function() {
-                                    swal('Berhasil', 'User berhasil dihapus!', 'success');
-                                    userTable.ajax.reload();
+                                    swal('Berhasil', 'Role berhasil dihapus!', 'success');
+                                    roleTable.ajax.reload();
                                 },
                                 error: function() {
-                                    swal('Gagal', 'User gagal dihapus!', 'error');
+                                    swal('Gagal', 'Role gagal dihapus!', 'error');
                                 }
                             });
                         }
