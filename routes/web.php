@@ -28,4 +28,5 @@ Route::middleware('auth')->group(function(){
     Route::post('user/permission', 'UserController@storePermission')->name('user.store.permission');
 
     Route::resource('role', 'RoleController');
+    Route::resource('kategori', 'KategoriController');
 });
