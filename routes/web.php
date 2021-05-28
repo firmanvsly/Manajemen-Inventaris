@@ -29,4 +29,6 @@ Route::middleware('auth')->group(function(){
 
     Route::resource('role', 'RoleController');
     Route::resource('kategori', 'KategoriController');
+    Route::resource('barang', 'BarangController');
+    Route::resource('ruangan', 'RuanganController');
 });

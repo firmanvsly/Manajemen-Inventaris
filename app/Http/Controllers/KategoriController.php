@@ -94,9 +94,9 @@ class KategoriController extends Controller
             'nama_kategori' => 'required|max:255|unique:kategori,nama_kategori,'.$id,
         ]);
 
-        $user                = Kategori::find($id);
-        $user->nama_kategori = $request->nama_kategori;
-        $user->save();
+        $kategori                = Kategori::find($id);
+        $kategori->nama_kategori = $request->nama_kategori;
+        $kategori->save();
 
         return redirect()->route('kategori.index')->with('success','Kategori Berhasil Diubah!');
     }

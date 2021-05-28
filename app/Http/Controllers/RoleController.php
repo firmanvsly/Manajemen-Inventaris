@@ -94,9 +94,9 @@ class RoleController extends Controller
             'nama_role' => 'required|max:255|unique:roles,nama_role,'.$id,
         ]);
 
-        $user            = Role::find($id);
-        $user->nama_role = $request->nama_role;
-        $user->save();
+        $role            = Role::find($id);
+        $role->nama_role = $request->nama_role;
+        $role->save();
 
         return redirect()->route('role.index')->with('success','Role Berhasil Diubah!');
     }
