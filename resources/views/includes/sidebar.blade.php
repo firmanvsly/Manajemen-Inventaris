@@ -11,21 +11,27 @@
 
         <div id="main-menu" class="main-menu collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="active">
+                <li class="{{ Request::segment(1) == 'dashboard' ? 'active' : 'asu' }}">
                     <a href="{{ route('dashboard') }}"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
                 </li>
-                <li>
-                    <a href="index.html"> <i class="menu-icon fa fa-users"></i>Users </a>
+                <li class="{{ Request::segment(1) == 'user' ? 'active' : '' }}">
+                    <a href="{{ route('user.index') }}"> <i class="menu-icon fa fa-users"></i>Users </a>
                 </li>
-                <li>
-                    <a href="index.html"> <i class="menu-icon fa fa-dropbox"></i>Barang </a>
+                <li class="{{ Request::segment(1) == 'role' ? 'active' : '' }}">
+                    <a href="{{ route('role.index') }}"> <i class="menu-icon fa fa-lock"></i>Role </a>
                 </li>
-                <li>
-                    <a href="index.html"> <i class="menu-icon fa fa-building-o"></i>Ruangan </a>
+                <li class="{{ Request::segment(1) == 'barang' ? 'active' : '' }}">
+                    <a href="{{ route('barang.index') }}"> <i class="menu-icon fa fa-dropbox"></i>Barang </a>
                 </li>
-                <li>
-                    <a href="index.html"> <i class="menu-icon fa fa-th"></i>Kategori </a>
+                <li class="{{ Request::segment(1) == 'ruangan' ? 'active' : '' }}">
+                    <a href="{{ route('ruangan.index') }}"> <i class="menu-icon fa fa-building-o"></i>Ruangan </a>
                 </li>
+                <li class="{{ Request::segment(1) == 'kategori' ? 'active' : '' }}">
+                    <a href="{{ route('kategori.index') }}"> <i class="menu-icon fa fa-th"></i>Kategori </a>
+                </li>
+                {{-- <li class="{{ Request::segment(1) == 'laporan' ? 'active' : '' }}">
+                    <a href="{{ route('laporan.index') }}"> <i class="menu-icon fa fa-book"></i>Laporan </a>
+                </li> --}}
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>

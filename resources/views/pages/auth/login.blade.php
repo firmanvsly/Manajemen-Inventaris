@@ -35,9 +35,7 @@
         <div class="container">
             <div class="login-content">
                 <div class="login-logo">
-                    <a href="index.html">
-                        <img class="align-content" src="images/logo.png" alt="">
-                    </a>
+                    <h3 class="text-white">Inventaris</h3>
                 </div>
                 <div class="login-form">
                     @if ($errors->any())

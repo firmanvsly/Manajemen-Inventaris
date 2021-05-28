@@ -110,6 +110,7 @@ class KategoriController extends Controller
     public function destroy($id)
     {
         $data = Kategori::find($id);
+        $data->inventaris_kategori()->delete();
         $data->delete();
     }
 }
