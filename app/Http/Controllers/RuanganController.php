@@ -45,7 +45,7 @@ class RuanganController extends Controller
                 ->addColumn('action', function ($data) {
                     $button = '';
                     if (Auth::user()->hasPermission('ruangan', 'update')) {
-                        $button = '<a href="/ruangan/' . $data->id . '/edit" class="text-warning" data-toggle="tooltip" data-placement="top" title="Ubah ruangan"><i class="fa fa-edit"></i></a>';
+                        $button .= '<a href="/ruangan/' . $data->id . '/edit" class="text-warning" data-toggle="tooltip" data-placement="top" title="Ubah ruangan"><i class="fa fa-edit"></i></a>';
                         $button .= '&nbsp;&nbsp;';
                     }
                     if (Auth::user()->hasPermission('ruangan', 'delete')) {

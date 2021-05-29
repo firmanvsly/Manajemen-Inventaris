@@ -36,29 +36,31 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <strong class="card-title">Kategori</strong>
-                            <a href="{{ route('kategori.create') }}" class="btn btn-primary">Tambah Kategori</a>
+                            @if (Auth::user()->hasPermission('kategori', 'create'))
+                                <a href="{{ route('kategori.create') }}" class="btn btn-primary">Tambah Kategori</a>
+                            @endif
                         </div>
                         <div class="card-body">
                             @if (Session::has('success'))
                                 <div class="sufee-alert alert with-close alert-success alert-dismissible fade show">
                                     {{ Session::get('success') }}
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">×</span>
-                                        </button>
+                                        <span aria-hidden="true">×</span>
+                                    </button>
                                 </div>
                             @elseif (Session::has('info'))
                                 <div class="sufee-alert alert with-close alert-info alert-dismissible fade show">
                                     {{ Session::get('info') }}
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">×</span>
-                                        </button>
+                                        <span aria-hidden="true">×</span>
+                                    </button>
                                 </div>
                             @elseif (Session::has('error'))
                                 <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
                                     {{ Session::get('error') }}
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">×</span>
-                                        </button>
+                                        <span aria-hidden="true">×</span>
+                                    </button>
                                 </div>
                             @endif
                             <table id="kategoriTable" class="table table-striped table-bordered">
@@ -140,5 +142,6 @@
                     });
             }
         })(jQuery);
+
     </script>
 @endpush

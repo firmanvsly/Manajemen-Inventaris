@@ -19,35 +19,36 @@
                 <li class="{{ Request::segment(1) == 'dashboard' ? 'active' : 'asu' }}">
                     <a href="{{ route('dashboard') }}"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
                 </li>
-                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('user','read')))
+                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('user', 'read')))
                     <li class="{{ Request::segment(1) == 'user' ? 'active' : '' }}">
                         <a href="{{ route('user.index') }}"> <i class="menu-icon fa fa-users"></i>User </a>
                     </li>
-                    @if (Auth::user()->hasRole('Owner'))
-                        <li class="{{ Request::segment(1) == 'role' ? 'active' : '' }}">
-                            <a href="{{ route('role.index') }}"> <i class="menu-icon fa fa-lock"></i>Role </a>
-                        </li>
-                    @endif
                 @endif
-                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('barang','read')))
+                @if (Auth::user()->hasRole('Owner'))
+                    <li class="{{ Request::segment(1) == 'role' ? 'active' : '' }}">
+                        <a href="{{ route('role.index') }}"> <i class="menu-icon fa fa-lock"></i>Role </a>
+                    </li>
+                @endif
+                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('barang', 'read')))
                     <li class="{{ Request::segment(1) == 'barang' ? 'active' : '' }}">
                         <a href="{{ route('barang.index') }}"> <i class="menu-icon fa fa-dropbox"></i>Barang </a>
                     </li>
                 @endif
-                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('ruangan','read')))
+                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('ruangan', 'read')))
                     <li class="{{ Request::segment(1) == 'ruangan' ? 'active' : '' }}">
-                        <a href="{{ route('ruangan.index') }}"> <i class="menu-icon fa fa-building-o"></i>Ruangan </a>
+                        <a href="{{ route('ruangan.index') }}"> <i class="menu-icon fa fa-building-o"></i>Ruangan
+                        </a>
                     </li>
                 @endif
-                @if (Auth::user()->hasRole('Owner') || Auth::user()->hasRole('Manager'))
+                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('kategori', 'read')))
                     <li class="{{ Request::segment(1) == 'kategori' ? 'active' : '' }}">
                         <a href="{{ route('kategori.index') }}"> <i class="menu-icon fa fa-th"></i>Kategori </a>
                     </li>
-                    @if (Auth::user()->hasRole('Manager'))
-                        <li class="{{ Request::segment(1) == 'laporan' ? 'active' : '' }}">
-                            <a href="{{ route('laporan.index') }}"> <i class="menu-icon fa fa-book"></i>Laporan </a>
-                        </li>
-                    @endif
+                @endif
+                @if (Auth::user()->hasRole('Manager'))
+                    <li class="{{ Request::segment(1) == 'laporan' ? 'active' : '' }}">
+                        <a href="{{ route('laporan.index') }}"> <i class="menu-icon fa fa-book"></i>Laporan </a>
+                    </li>
                 @endif
             </ul>
         </div><!-- /.navbar-collapse -->
