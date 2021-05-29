@@ -33,8 +33,14 @@ class LaporanController extends Controller
     
     public function excel(Request $request)
     {
+        $request->validate([
+            'type' => 'required'
+        ], [
+            'type.required' => 'Inventaris harus diisi!'
+        ]);
+        
         $type = ucwords($request->type);
-        return Excel::download(new InventarisExport($request), 'Inventaris-' . $type . '.xlsx');
+        return Excel::download(new InventarisExport($request), 'Inventaris-' . $type . '.xls');
     }
 
     private function _filter($request)

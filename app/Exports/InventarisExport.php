@@ -44,6 +44,7 @@ class InventarisExport implements FromArray, WithHeadings
         });
 
         $no = 1;
+        $inventaris = array();
         foreach ($datas as $data) {
             $inventaris[] = [
                 'no'         => $no++,
