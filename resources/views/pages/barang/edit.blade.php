@@ -28,7 +28,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
-                        <form action="{{ route('barang.update',$data->id) }}" method="post" class="form-horizontal">
+                        <form action="{{ route('barang.update', $data->id) }}" method="post" class="form-horizontal">
                             @csrf
                             @method('put')
                             <div class="card-header">
@@ -51,34 +51,41 @@
                                     <div class="col col-md-3"><label for="text-input"
                                             class=" form-control-label">Nama</label></div>
                                     <div class="col-12 col-md-9">
-                                        <input type="hidden" id="text-input" name="type"
-                                            placeholder="Barang" class="form-control" value="barang" required>
-                                        <input type="text" id="text-input" name="nama"
-                                            placeholder="Nama" class="form-control" value="{{ old('nama') ? old('nama') : $data->nama }}" required>
+                                        <input type="hidden" id="text-input" name="type" placeholder="Barang"
+                                            class="form-control" value="barang" required>
+                                        <input type="text" id="text-input" name="nama" placeholder="Nama"
+                                            class="form-control" value="{{ old('nama') ? old('nama') : $data->nama }}"
+                                            required>
                                     </div>
                                 </div>
                                 <div class="row form-group">
                                     <div class="col col-md-3"><label for="text-input"
                                             class=" form-control-label">Kategori</label></div>
                                     <div class="col-12 col-md-9">
-                                        <div class="form-check">
-                                            @foreach ($kategori as $k)
-                                                <div class="checkbox">
-                                                    <label for="kategori{{ $k->id }}" class="form-check-label ">
-                                                        <input type="checkbox" id="kategori{{ $k->id }}" name="kategori[]" value="{{ $k->id }}"
-                                                            class="form-check-input" {{ $k->checked == 1 ? 'checked' : '' }}>{{ $k->nama_kategori }}
-                                                    </label>
-                                                </div>
-                                            @endforeach
-                                        </div>
+                                        @if ($kategori->count())
+                                            <div class="form-check">
+                                                @foreach ($kategori as $k)
+                                                    <div class="checkbox">
+                                                        <label for="kategori{{ $k->id }}" class="form-check-label ">
+                                                            <input type="checkbox" id="kategori{{ $k->id }}"
+                                                                name="kategori[]" value="{{ $k->id }}"
+                                                                class="form-check-input"
+                                                                {{ $k->checked == 1 ? 'checked' : '' }}>{{ $k->nama_kategori }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <p>Tidak Ada Kategori</p>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="row form-group">
                                     <div class="col col-md-3"><label for="text-input"
                                             class=" form-control-label">Jumlah</label></div>
                                     <div class="col-12 col-md-9"><input type="number" id="text-input" name="jumlah"
-                                            placeholder="Jumlah" class="form-control" value="{{ old('jumlah') ? old('jumlah') : $data->jumlah }}"
-                                            required>
+                                            placeholder="Jumlah" class="form-control"
+                                            value="{{ old('jumlah') ? old('jumlah') : $data->jumlah }}" required>
                                     </div>
                                 </div>
                                 <div class="row form-group">
@@ -89,19 +96,22 @@
                                             <div class="radio">
                                                 <label for="radioBaik" class="form-check-label ">
                                                     <input type="radio" id="radioBaik" name="kondisi" value="baik"
-                                                        class="form-check-input" {{ old('kondisi') ? (old('kondisi') == 'baik' ? 'checked' : '') : ($data->kondisi == 'baik' ? 'checked' : '') }}>Baik
+                                                        class="form-check-input"
+                                                        {{ old('kondisi') ? (old('kondisi') == 'baik' ? 'checked' : '') : ($data->kondisi == 'baik' ? 'checked' : '') }}>Baik
                                                 </label>
                                             </div>
                                             <div class="radio">
                                                 <label for="radioKurang" class="form-check-label ">
                                                     <input type="radio" id="radioKurang" name="kondisi" value="kurang"
-                                                        class="form-check-input" {{ old('kondisi') ? (old('kondisi') == 'kurang' ? 'checked' : '') : ($data->kondisi == 'kurang' ? 'checked' : '') }}>Kurang
+                                                        class="form-check-input"
+                                                        {{ old('kondisi') ? (old('kondisi') == 'kurang' ? 'checked' : '') : ($data->kondisi == 'kurang' ? 'checked' : '') }}>Kurang
                                                 </label>
                                             </div>
                                             <div class="radio">
                                                 <label for="radioRusak" class="form-check-label ">
                                                     <input type="radio" id="radioRusak" name="kondisi" value="rusak"
-                                                        class="form-check-input" {{ old('kondisi') ? (old('kondisi') == 'rusak' ? 'checked' : '') : ($data->kondisi == 'rusak' ? 'checked' : '') }}>Rusak
+                                                        class="form-check-input"
+                                                        {{ old('kondisi') ? (old('kondisi') == 'rusak' ? 'checked' : '') : ($data->kondisi == 'rusak' ? 'checked' : '') }}>Rusak
                                                 </label>
                                             </div>
                                         </div>
@@ -110,7 +120,8 @@
                                 <div class="row form-group">
                                     <div class="col col-md-3"><label for="text-input"
                                             class=" form-control-label">Keterangan</label></div>
-                                    <div class="col-12 col-md-9"><textarea rows="4" name="keterangan" placeholder="Keterangan"
+                                    <div class="col-12 col-md-9"><textarea rows="4" name="keterangan"
+                                            placeholder="Keterangan"
                                             class="form-control">{{ old('keterangan') ? old('keterangan') : $data->keterangan }}</textarea>
                                     </div>
                                 </div>

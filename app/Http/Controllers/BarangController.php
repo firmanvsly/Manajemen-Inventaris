@@ -7,9 +7,16 @@ use App\Models\InventarisKategori;
 use App\Models\Kategori;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BarangController extends Controller
 {
+    private function _checkRole($permission)
+    {
+        if (!Auth::user()->hasPermission('barang',$permission)) {
+            abort(404);
+        }
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,10 +24,7 @@ class BarangController extends Controller
      */
     public function index(Request $request)
     {
-        $kategori = Kategori::all();
-        if (!$kategori->count()) {
-            return redirect()->route('kategori.index')->with('info','Tambah Kategori Terlebih Dahulu');
-        }
+        $this->_checkRole('read');
         if ($request->ajax()) {
             $data = Inventaris::barang()->latest()->get();
             return datatables()->of($data)
@@ -39,9 +43,14 @@ class BarangController extends Controller
                     return $kategoris;
                 })
                 ->addColumn('action', function ($data) {
-                    $button = '<a href="/barang/' . $data->id . '/edit" class="text-warning" data-toggle="tooltip" data-placement="top" title="Ubah Barang"><i class="fa fa-edit"></i></a>';
-                    $button .= '&nbsp;&nbsp;';
-                    $button .= '<a href="#" data-id="' . $data->id . '" class="text-danger btn-delete" data-toggle="tooltip" data-placement="top" title="Hapus Barang"><i class="fa fa-trash-o"></i></a>';
+                    $button = '';
+                    if (Auth::user()->hasPermission('barang','update')) {
+                        $button .= '<a href="/barang/' . $data->id . '/edit" class="text-warning" data-toggle="tooltip" data-placement="top" title="Ubah Barang"><i class="fa fa-edit"></i></a>';
+                        $button .= '&nbsp;&nbsp;';
+                    }
+                    if (Auth::user()->hasPermission('barang','delete')) {
+                        $button .= '<a href="#" data-id="' . $data->id . '" class="text-danger btn-delete" data-toggle="tooltip" data-placement="top" title="Hapus Barang"><i class="fa fa-trash-o"></i></a>';
+                    }
                     // $button .= '<button onclick="deletedatainstansi('.$data->id_instansi.')" class="btn btn-danger">Hapus</button>';
                     return $button;
                 })
@@ -59,10 +68,8 @@ class BarangController extends Controller
      */
     public function create()
     {
+        $this->_checkRole('create');
         $kategori = Kategori::all();
-        if (!$kategori->count()) {
-            return redirect()->route('kategori.index')->with('info','Tambah Kategori Terlebih Dahulu');
-        }
         
         return view('pages.barang.create',compact('kategori'));
     }
@@ -75,25 +82,27 @@ class BarangController extends Controller
      */
     public function store(Request $request)
     {
+        $this->_checkRole('create');
         $request->validate([
             'type' => 'required',
             'nama' => 'required|max:255',
-            'kategori' => 'required',
             'jumlah' => 'required|numeric|digits_between:1,4|min:0',
             'kondisi' => 'required',
             'keterangan' => 'required|max:255',
         ]);
 
         $barang = Inventaris::create($request->all());
-        for ($i=0; $i < count($request->kategori); $i++) { 
-            $kategori[] = [
-                'id_inventaris' => $barang->id,
-                'id_kategori' => $request->kategori[$i],
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ];
+        if ($request->kategori) {
+            for ($i=0; $i < count($request->kategori); $i++) { 
+                $kategori[] = [
+                    'id_inventaris' => $barang->id,
+                    'id_kategori' => $request->kategori[$i],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ];
+            }
+            InventarisKategori::insert($kategori);
         }
-        InventarisKategori::insert($kategori);
         return redirect()->route('barang.index')->with('success','Barang Berhasil Ditambahkan!');
     }
 
@@ -116,10 +125,8 @@ class BarangController extends Controller
      */
     public function edit($id)
     {
+        $this->_checkRole('update');
         $kategori = Kategori::all();
-        if (!$kategori->count()) {
-            return redirect()->route('kategori.index')->with('info','Tambah Kategori Terlebih Dahulu');
-        }
         
         $data = Inventaris::findOrFail($id);
 
@@ -147,6 +154,7 @@ class BarangController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->_checkRole('update');
         $request->validate([
             'type' => 'required',
             'nama' => 'required|max:255',
@@ -164,16 +172,18 @@ class BarangController extends Controller
 
         InventarisKategori::where('id_inventaris',$id)->delete();
 
-        for ($i=0; $i < count($request->kategori); $i++) { 
-            $kategori[] = [
-                'id_inventaris' => $barang->id,
-                'id_kategori' => $request->kategori[$i],
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ];
+        if ($request->kategori) {
+            for ($i=0; $i < count($request->kategori); $i++) { 
+                $kategori[] = [
+                    'id_inventaris' => $barang->id,
+                    'id_kategori' => $request->kategori[$i],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ];
+            }
+            
+            InventarisKategori::insert($kategori);
         }
-
-        InventarisKategori::insert($kategori);
 
         return redirect()->route('barang.index')->with('success','Barang Berhasil Diubah!');
     }
@@ -186,6 +196,7 @@ class BarangController extends Controller
      */
     public function destroy($id)
     {
+        $this->_checkRole('delete');
         $data = Inventaris::find($id);
         $data->inventaris_kategori()->delete();
         $data->delete();

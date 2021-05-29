@@ -60,16 +60,21 @@
                                     <div class="col col-md-3"><label for="text-input"
                                             class=" form-control-label">Kategori</label></div>
                                     <div class="col-12 col-md-9">
-                                        <div class="form-check">
-                                            @foreach ($kategori as $k)
-                                                <div class="checkbox">
-                                                    <label for="kategori{{ $k->id }}" class="form-check-label ">
-                                                        <input type="checkbox" id="kategori{{ $k->id }}" name="kategori[]" value="{{ $k->id }}"
-                                                            class="form-check-input">{{ $k->nama_kategori }}
-                                                    </label>
-                                                </div>
-                                            @endforeach
-                                        </div>
+                                        @if ($kategori->count())
+                                            <div class="form-check">
+                                                @foreach ($kategori as $k)
+                                                    <div class="checkbox">
+                                                        <label for="kategori{{ $k->id }}" class="form-check-label ">
+                                                            <input type="checkbox" id="kategori{{ $k->id }}"
+                                                                name="kategori[]" value="{{ $k->id }}"
+                                                                class="form-check-input">{{ $k->nama_kategori }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <p>Tidak Ada Kategori</p>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="row form-group">
