@@ -32,4 +32,22 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'id_role', 'id');
     }
+
+    public function permission()
+    {
+        return $this->hasMany(Permission::class, 'id_user', 'id');
+    }
+
+    public function hasRole($role)
+    {
+        return $this->role->nama_role == $role;
+    }
+
+    public function hasPermission($type, $permission)
+    {
+        return $this->whereHas('permission', function ($q) use ($type, $permission) {
+            $q->where('type', $type)
+                ->where($permission, 1);
+        })->first();
+    }
 }

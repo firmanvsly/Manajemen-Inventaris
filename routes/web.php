@@ -21,14 +21,15 @@ Route::post('login', 'AuthController@authenticate')->name('login.auth');
 Route::post('logout', 'AuthController@logout')->name('logout');
 Route::middleware('auth')->group(function(){
     Route::get('dashboard','DashboardController@index')->name('dashboard');
-    Route::resource('user', 'UserController');
-    Route::get('user/{id}/password', 'UserController@password')->name('user.password');
-    Route::put('user/password/{id}', 'UserController@changePassword')->name('user.change.password');
-    Route::get('user/{id}/permission', 'UserController@permission')->name('user.permission');
-    Route::post('user/permission', 'UserController@storePermission')->name('user.store.permission');
+    Route::resource('user', 'UserController')->middleware('role:Owner,Manager');
+    Route::get('user/{id}/password', 'UserController@password')->name('user.password')->middleware('role:Owner');
+    Route::put('user/password/{id}', 'UserController@changePassword')->name('user.change.password')->middleware('role:Owner');
+    Route::get('user/{id}/permission', 'UserController@permission')->name('user.permission')->middleware('role:Owner');
+    Route::post('user/permission', 'UserController@storePermission')->name('user.store.permission')->middleware('role:Owner');
 
-    Route::resource('role', 'RoleController');
-    Route::resource('kategori', 'KategoriController');
+    Route::resource('role', 'RoleController')->middleware('role:Owner');
+    Route::resource('kategori', 'KategoriController')->middleware('role:Owner,Manager');
     Route::resource('barang', 'BarangController');
     Route::resource('ruangan', 'RuanganController');
+    Route::get('laporan', 'LaporanController@index')->name('laporan.index')->middleware('role:Manager');
 });

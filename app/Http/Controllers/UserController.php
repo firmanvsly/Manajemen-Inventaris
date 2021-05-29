@@ -7,10 +7,17 @@ use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    private function _checkRole($permission)
+    {
+        if (!Auth::user()->hasPermission('user',$permission)) {
+            abort(404);
+        }
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,22 +25,36 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        $this->_checkRole('read');
         if ($request->ajax()) {
-            $data = User::latest()->get();
+            if (Auth::user()->hasRole('Owner')) {
+                $data = User::latest()->get();
+            }else{
+                $data = User::whereHas('role',function($q) {
+                    $q->where('nama_role','Staff');
+                })->latest()->get();
+            }
             return datatables()->of($data)
                 ->addColumn('role', function($data) {
                     return $data->role->nama_role;
                 })
                 ->addColumn('action', function ($data) {
-                    $button = '<a href="user/' . $data->id . '/edit" class="text-warning" data-toggle="tooltip" data-placement="top" title="Ubah User"><i class="fa fa-edit"></i></a>';
-                    $button .= '&nbsp;&nbsp;';
-                    $button .= '<a href="user/' . $data->id . '/password" class="text-primary" data-toggle="tooltip" data-placement="top" title="Ubah Password"><i class="fa fa-lock"></i></a>';
-                    $button .= '&nbsp;&nbsp;';
-                    if ($data->role->nama_role != 'Owner') {
-                        $button .= '<a href="user/' . $data->id . '/permission" class="text-secondary" data-toggle="tooltip" data-placement="top" title="Manage Permission"><i class="fa fa-tasks"></i></a>';
+                    $button = '';
+                    if (Auth::user()->hasPermission('user','update')) {
+                        $button .= '<a href="user/' . $data->id . '/edit" class="text-warning" data-toggle="tooltip" data-placement="top" title="Ubah User"><i class="fa fa-edit"></i></a>';
                         $button .= '&nbsp;&nbsp;';
                     }
-                    $button .= '<a href="#" data-id="' . $data->id . '" class="text-danger btn-delete" data-toggle="tooltip" data-placement="top" title="Hapus User"><i class="fa fa-trash-o"></i></a>';
+                    if (Auth::user()->hasRole('Owner')) {
+                        $button .= '<a href="user/' . $data->id . '/password" class="text-primary" data-toggle="tooltip" data-placement="top" title="Ubah Password"><i class="fa fa-lock"></i></a>';
+                        $button .= '&nbsp;&nbsp;';
+                        if ($data->role->nama_role != 'Owner') {
+                            $button .= '<a href="user/' . $data->id . '/permission" class="text-secondary" data-toggle="tooltip" data-placement="top" title="Manage Permission"><i class="fa fa-tasks"></i></a>';
+                            $button .= '&nbsp;&nbsp;';
+                        }
+                    }
+                    if (Auth::user()->hasPermission('user','delete')) {
+                        $button .= '<a href="#" data-id="' . $data->id . '" class="text-danger btn-delete" data-toggle="tooltip" data-placement="top" title="Hapus User"><i class="fa fa-trash-o"></i></a>';
+                    }
                     // $button .= '<button onclick="deletedatainstansi('.$data->id_instansi.')" class="btn btn-danger">Hapus</button>';
                     return $button;
                 })
@@ -51,7 +72,12 @@ class UserController extends Controller
      */
     public function create()
     {
-        $role = Role::all();
+        $this->_checkRole('create');
+        if (Auth::user()->hasRole('Owner')) {
+            $role = Role::all();
+        }else{
+            $role = Role::where('nama_role','Staff')->get();
+        }
         return view('pages.user.create', compact('role'));
     }
 
@@ -63,6 +89,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $this->_checkRole('create');
         $request->validate([
             'name' => 'required|min:3|max:255',
             'username' => 'required|min:3|max:255|unique:users,username',
@@ -96,8 +123,13 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+        $this->_checkRole('update');
         $data = User::findOrFail($id);
-        $role = Role::all();
+        if (Auth::user()->hasRole('Owner')) {
+            $role = Role::all();
+        }else{
+            $role = Role::where('nama_role','Staff')->get();
+        }
 
         return view('pages.user.edit',compact('data','role'));
     }
@@ -111,6 +143,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->_checkRole('update');
         $request->validate([
             'name' => 'required|min:3|max:255',
             'username' => 'required|min:3|max:255|unique:users,username,'.$id,
@@ -134,6 +167,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+        $this->_checkRole('delete');
         $data = User::find($id);
         $data->delete();
         

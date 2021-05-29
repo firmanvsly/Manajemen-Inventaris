@@ -36,7 +36,9 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <strong class="card-title">User</strong>
-                            <a href="{{ route('user.create') }}" class="btn btn-primary">Tambah User</a>
+                            @if (Auth::user()->hasPermission('user','create'))
+                                <a href="{{ route('user.create') }}" class="btn btn-primary">Tambah User</a>
+                            @endif
                         </div>
                         <div class="card-body">
                             @if (Session::has('success'))
