@@ -34,9 +34,11 @@
                         <a href="{{ route('barang.index') }}"> <i class="menu-icon fa fa-dropbox"></i>Barang </a>
                     </li>
                 @endif
-                <li class="{{ Request::segment(1) == 'ruangan' ? 'active' : '' }}">
-                    <a href="{{ route('ruangan.index') }}"> <i class="menu-icon fa fa-building-o"></i>Ruangan </a>
-                </li>
+                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('ruangan','read')))
+                    <li class="{{ Request::segment(1) == 'ruangan' ? 'active' : '' }}">
+                        <a href="{{ route('ruangan.index') }}"> <i class="menu-icon fa fa-building-o"></i>Ruangan </a>
+                    </li>
+                @endif
                 @if (Auth::user()->hasRole('Owner') || Auth::user()->hasRole('Manager'))
                     <li class="{{ Request::segment(1) == 'kategori' ? 'active' : '' }}">
                         <a href="{{ route('kategori.index') }}"> <i class="menu-icon fa fa-th"></i>Kategori </a>

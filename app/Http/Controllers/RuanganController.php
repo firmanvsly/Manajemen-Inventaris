@@ -7,9 +7,16 @@ use App\Models\InventarisKategori;
 use App\Models\Kategori;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RuanganController extends Controller
 {
+    private function _checkRole($permission)
+    {
+        if (!Auth::user()->hasPermission('ruangan', $permission)) {
+            abort(404);
+        }
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,35 +24,37 @@ class RuanganController extends Controller
      */
     public function index(Request $request)
     {
-        $kategori = Kategori::all();
-        if (!$kategori->count()) {
-            return redirect()->route('kategori.index')->with('info','Tambah Kategori Terlebih Dahulu');
-        }
+        $this->_checkRole('read');
         if ($request->ajax()) {
             $data = Inventaris::ruangan()->latest()->get();
             return datatables()->of($data)
                 ->editColumn('kondisi', '{{ ucwords($kondisi) }}')
                 ->addColumn('kategori', function ($data) {
-                    $kategori = InventarisKategori::where('id_inventaris',$data->id)->get();
+                    $kategori = InventarisKategori::where('id_inventaris', $data->id)->get();
                     if ($kategori->count()) {
                         $kategoris = '';
                         foreach ($kategori as $k) {
-                            $kategoris .= '<span class="badge badge-secondary">'.$k->kategori->nama_kategori.'</span>&nbsp;';
+                            $kategoris .= '<span class="badge badge-secondary">' . $k->kategori->nama_kategori . '</span>&nbsp;';
                         }
-                    }else{
+                    } else {
                         $kategoris = '-';
                     }
 
                     return $kategoris;
                 })
                 ->addColumn('action', function ($data) {
-                    $button = '<a href="/ruangan/' . $data->id . '/edit" class="text-warning" data-toggle="tooltip" data-placement="top" title="Ubah ruangan"><i class="fa fa-edit"></i></a>';
-                    $button .= '&nbsp;&nbsp;';
-                    $button .= '<a href="#" data-id="' . $data->id . '" class="text-danger btn-delete" data-toggle="tooltip" data-placement="top" title="Hapus ruangan"><i class="fa fa-trash-o"></i></a>';
+                    $button = '';
+                    if (Auth::user()->hasPermission('ruangan', 'update')) {
+                        $button = '<a href="/ruangan/' . $data->id . '/edit" class="text-warning" data-toggle="tooltip" data-placement="top" title="Ubah ruangan"><i class="fa fa-edit"></i></a>';
+                        $button .= '&nbsp;&nbsp;';
+                    }
+                    if (Auth::user()->hasPermission('ruangan', 'delete')) {
+                        $button .= '<a href="#" data-id="' . $data->id . '" class="text-danger btn-delete" data-toggle="tooltip" data-placement="top" title="Hapus ruangan"><i class="fa fa-trash-o"></i></a>';
+                    }
                     // $button .= '<button onclick="deletedatainstansi('.$data->id_instansi.')" class="btn btn-danger">Hapus</button>';
                     return $button;
                 })
-                ->rawColumns(['kategori','action'])
+                ->rawColumns(['kategori', 'action'])
                 ->addIndexColumn()
                 ->make(true);
         }
@@ -59,12 +68,10 @@ class RuanganController extends Controller
      */
     public function create()
     {
+        $this->_checkRole('create');
         $kategori = Kategori::all();
-        if (!$kategori->count()) {
-            return redirect()->route('kategori.index')->with('info','Tambah Kategori Terlebih Dahulu');
-        }
-        
-        return view('pages.ruangan.create',compact('kategori'));
+
+        return view('pages.ruangan.create', compact('kategori'));
     }
 
     /**
@@ -75,26 +82,28 @@ class RuanganController extends Controller
      */
     public function store(Request $request)
     {
+        $this->_checkRole('create');
         $request->validate([
             'type' => 'required',
             'nama' => 'required|max:255',
-            'kategori' => 'required',
             'jumlah' => 'required|numeric|digits_between:1,4|min:0',
             'kondisi' => 'required',
             'keterangan' => 'required|max:255',
         ]);
 
         $ruangan = Inventaris::create($request->all());
-        for ($i=0; $i < count($request->kategori); $i++) { 
-            $kategori[] = [
-                'id_inventaris' => $ruangan->id,
-                'id_kategori' => $request->kategori[$i],
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ];
+        if ($request->kategori) {
+            for ($i = 0; $i < count($request->kategori); $i++) {
+                $kategori[] = [
+                    'id_inventaris' => $ruangan->id,
+                    'id_kategori' => $request->kategori[$i],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ];
+            }
+            InventarisKategori::insert($kategori);
         }
-        InventarisKategori::insert($kategori);
-        return redirect()->route('ruangan.index')->with('success','Ruangan Berhasil Ditambahkan!');
+        return redirect()->route('ruangan.index')->with('success', 'Ruangan Berhasil Ditambahkan!');
     }
 
     /**
@@ -116,26 +125,24 @@ class RuanganController extends Controller
      */
     public function edit($id)
     {
+        $this->_checkRole('update');
         $kategori = Kategori::all();
-        if (!$kategori->count()) {
-            return redirect()->route('kategori.index')->with('info','Tambah Kategori Terlebih Dahulu');
-        }
-        
+
         $data = Inventaris::findOrFail($id);
 
-        $kategori->map(function($item) use($data) {
-            $ik = InventarisKategori::where('id_inventaris',$data->id)
-                ->where('id_kategori',$item->id)
+        $kategori->map(function ($item) use ($data) {
+            $ik = InventarisKategori::where('id_inventaris', $data->id)
+                ->where('id_kategori', $item->id)
                 ->first();
 
-            if ($ik){
+            if ($ik) {
                 return $item->checked = 1;
-            }else{
+            } else {
                 return $item->checked = 0;
             }
         });
 
-        return view('pages.ruangan.edit',compact('data','kategori'));
+        return view('pages.ruangan.edit', compact('data', 'kategori'));
     }
 
     /**
@@ -147,6 +154,7 @@ class RuanganController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->_checkRole('update');
         $request->validate([
             'type' => 'required',
             'nama' => 'required|max:255',
@@ -162,20 +170,22 @@ class RuanganController extends Controller
         $ruangan->keterangan = $request->keterangan;
         $ruangan->save();
 
-        InventarisKategori::where('id_inventaris',$id)->delete();
+        InventarisKategori::where('id_inventaris', $id)->delete();
 
-        for ($i=0; $i < count($request->kategori); $i++) { 
-            $kategori[] = [
-                'id_inventaris' => $ruangan->id,
-                'id_kategori' => $request->kategori[$i],
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ];
+        if ($request->kategori) {
+            for ($i = 0; $i < count($request->kategori); $i++) {
+                $kategori[] = [
+                    'id_inventaris' => $ruangan->id,
+                    'id_kategori' => $request->kategori[$i],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ];
+            }
+
+            InventarisKategori::insert($kategori);
         }
 
-        InventarisKategori::insert($kategori);
-
-        return redirect()->route('ruangan.index')->with('success','Ruangan Berhasil Diubah!');
+        return redirect()->route('ruangan.index')->with('success', 'Ruangan Berhasil Diubah!');
     }
 
     /**
@@ -186,6 +196,7 @@ class RuanganController extends Controller
      */
     public function destroy($id)
     {
+        $this->_checkRole('delete');
         $data = Inventaris::find($id);
         $data->inventaris_kategori()->delete();
         $data->delete();

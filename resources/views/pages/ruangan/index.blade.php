@@ -36,29 +36,31 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <strong class="card-title">Ruangan</strong>
-                            <a href="{{ route('ruangan.create') }}" class="btn btn-primary">Tambah Ruangan</a>
+                            @if (Auth::user()->hasPermission('ruangan', 'create'))
+                                <a href="{{ route('ruangan.create') }}" class="btn btn-primary">Tambah Ruangan</a>
+                            @endif
                         </div>
                         <div class="card-body">
                             @if (Session::has('success'))
                                 <div class="sufee-alert alert with-close alert-success alert-dismissible fade show">
                                     {{ Session::get('success') }}
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">×</span>
-                                        </button>
+                                        <span aria-hidden="true">×</span>
+                                    </button>
                                 </div>
                             @elseif (Session::has('info'))
                                 <div class="sufee-alert alert with-close alert-info alert-dismissible fade show">
                                     {{ Session::get('info') }}
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">×</span>
-                                        </button>
+                                        <span aria-hidden="true">×</span>
+                                    </button>
                                 </div>
                             @elseif (Session::has('error'))
                                 <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
                                     {{ Session::get('error') }}
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                            <span aria-hidden="true">×</span>
-                                        </button>
+                                        <span aria-hidden="true">×</span>
+                                    </button>
                                 </div>
                             @endif
                             <table id="ruanganTable" class="table table-striped table-bordered">
@@ -96,28 +98,27 @@
                 serverSide: true,
                 ajax: '{{ route('ruangan.index') }}',
                 columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
-                    }, {
-                        data: 'nama',
-                        name: 'nama'
-                    }, {
-                        data: 'kategori',
-                        name: 'kategori'
-                    }, {
-                        data: 'jumlah',
-                        name: 'jumlah'
-                    }, {
-                        data: 'kondisi',
-                        name: 'kondisi'
-                    }, {
-                        data: 'keterangan',
-                        name: 'keterangan'
-                    }, {
-                        data: 'action',
-                        name: 'action'
-                    }
-                ]
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex'
+                }, {
+                    data: 'nama',
+                    name: 'nama'
+                }, {
+                    data: 'kategori',
+                    name: 'kategori'
+                }, {
+                    data: 'jumlah',
+                    name: 'jumlah'
+                }, {
+                    data: 'kondisi',
+                    name: 'kondisi'
+                }, {
+                    data: 'keterangan',
+                    name: 'keterangan'
+                }, {
+                    data: 'action',
+                    name: 'action'
+                }]
             });
 
             $('#ruanganTable').on('click', '.btn-delete', function() {
@@ -154,5 +155,6 @@
                     });
             }
         })(jQuery);
+
     </script>
 @endpush
