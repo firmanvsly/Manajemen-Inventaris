@@ -34,7 +34,7 @@
                         <a href="{{ route('barang.index') }}"> <i class="menu-icon fa fa-dropbox"></i>Barang </a>
                     </li>
                 @endif
-                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('ruangan', 'read')))
+                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('ruangan', 'read')) || (Auth::user()->hasRole('Staff') && Auth::user()->hasPermission('ruangan', 'read')))
                     <li class="{{ Request::segment(1) == 'ruangan' ? 'active' : '' }}">
                         <a href="{{ route('ruangan.index') }}"> <i class="menu-icon fa fa-building-o"></i>Ruangan
                         </a>
