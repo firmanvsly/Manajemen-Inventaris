@@ -29,7 +29,7 @@
                         <a href="{{ route('role.index') }}"> <i class="menu-icon fa fa-lock"></i>Role </a>
                     </li>
                 @endif
-                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('barang', 'read')))
+                @if (Auth::user()->hasRole('Owner') || (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('barang', 'read')) || (Auth::user()->hasRole('Staff') && Auth::user()->hasPermission('barang', 'read')))
                     <li class="{{ Request::segment(1) == 'barang' ? 'active' : '' }}">
                         <a href="{{ route('barang.index') }}"> <i class="menu-icon fa fa-dropbox"></i>Barang </a>
                     </li>

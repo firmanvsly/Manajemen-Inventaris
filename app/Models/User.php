@@ -45,9 +45,7 @@ class User extends Authenticatable
 
     public function hasPermission($type, $permission)
     {
-        return $this->whereHas('permission', function ($q) use ($type, $permission) {
-            $q->where('type', $type)
-                ->where($permission, 1);
-        })->first();
+        return $this->permission->where('type', $type)
+            ->where($permission, 1)->first();
     }
 }
