@@ -32,4 +32,6 @@ Route::middleware('auth')->group(function(){
     Route::resource('barang', 'BarangController');
     Route::resource('ruangan', 'RuanganController');
     Route::get('laporan', 'LaporanController@index')->name('laporan.index')->middleware('role:Manager');
+    // Route::post('laporan/pdf', 'LaporanController@pdf')->name('laporan.pdf')->middleware('role:Manager');
+    // Route::post('laporan/excel', 'LaporanController@excel')->name('laporan.excel')->middleware('role:Manager');
 });

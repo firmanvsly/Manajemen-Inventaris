@@ -45,7 +45,7 @@
                         <a href="{{ route('kategori.index') }}"> <i class="menu-icon fa fa-th"></i>Kategori </a>
                     </li>
                 @endif
-                @if (Auth::user()->hasRole('Manager'))
+                @if (Auth::user()->hasRole('Manager') && Auth::user()->hasPermission('laporan', 'download'))
                     <li class="{{ Request::segment(1) == 'laporan' ? 'active' : '' }}">
                         <a href="{{ route('laporan.index') }}"> <i class="menu-icon fa fa-book"></i>Laporan </a>
                     </li>
